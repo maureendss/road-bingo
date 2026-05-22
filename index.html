@@ -152,25 +152,50 @@
     .cell.tapped { background: rgba(34,197,94,0.28); border-color: #22c55e; color: #86efac; }
     .cell.bingo  { background: rgba(245,158,11,0.32); border-color: #f59e0b; color: #fde68a; }
 
+    /* Image container — height controlled by --img-h on the grid */
     .cell-img {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: var(--img-h, 40px);
+      gap: 3px;
       flex-shrink: 0;
     }
+    /* SVGs (colored cars) get explicit height */
     .cell-img svg {
-      height: 100%;
+      height: var(--img-h, 40px);
       width: auto;
       display: block;
     }
-    .cell-swatch {
-      width: var(--img-h, 40px);
+    /* Brand logo images */
+    .cell-img img {
       height: var(--img-h, 40px);
-      border-radius: 50%;
-      border: 2.5px solid rgba(255,255,255,0.25);
+      width: auto;
+      max-width: 85%;
+      object-fit: contain;
+      display: block;
+    }
+    /* Type badge pill for Brand+Type mode */
+    .type-badge {
+      color: #fff;
+      border-radius: 50px;
+      padding: 1px 7px;
+      font-size: 0.58rem;
+      font-weight: 700;
+      white-space: nowrap;
+      line-height: 1.7;
       flex-shrink: 0;
     }
+    /* Logo fallback initial */
+    .logo-fallback {
+      font-size: 1.3rem;
+      font-weight: 900;
+      opacity: 0.75;
+      height: var(--img-h, 40px);
+      display: flex;
+      align-items: center;
+    }
+
     .cell-lbl { text-align: center; width: 100%; padding: 0 2px; }
 
     /* ── TOAST ── */
@@ -325,6 +350,7 @@ const DATA = {
   ]
 };
 
+/* ── COLORS → actual CSS hex ── */
 const COLOR_CSS = {
   'Red':'#ef4444','Blue':'#3b82f6','White':'#f1f5f9','Black':'#1e293b',
   'Silver':'#94a3b8','Gray':'#6b7280','Green':'#22c55e','Yellow':'#eab308',
@@ -335,55 +361,29 @@ const COLOR_CSS = {
   'Champagne':'#e8d5b7'
 };
 
-/* ── CAR SVGs (fill="currentColor" — inherit tap/bingo color) ── */
-const CAR_SVGS = {
-  sedan: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M24,27 L33,12 L67,12 L76,27 Z"/>
-    <rect x="4" y="27" width="92" height="14" rx="5"/>
-    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="26" cy="41" r="4.5"/>
-    <circle cx="74" cy="41" r="4.5"/>
-  </svg>`,
-
-  hatchback: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17,27 L26,12 L72,12 L79,27 Z"/>
-    <rect x="4" y="27" width="92" height="14" rx="5"/>
-    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="26" cy="41" r="4.5"/>
-    <circle cx="74" cy="41" r="4.5"/>
-  </svg>`,
-
-  suv: `<svg viewBox="0 0 100 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <rect x="11" y="8" width="78" height="17" rx="4"/>
-    <rect x="4" y="23" width="92" height="18" rx="5"/>
-    <circle cx="26" cy="41" r="10" fill-opacity="0.45"/>
-    <circle cx="74" cy="41" r="10" fill-opacity="0.45"/>
-    <circle cx="26" cy="41" r="5"/>
-    <circle cx="74" cy="41" r="5"/>
-  </svg>`,
-
-  van: `<svg viewBox="0 0 100 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <rect x="4" y="7" width="92" height="33" rx="5"/>
-    <rect x="9" y="12" width="68" height="18" rx="3" fill-opacity="0.2"/>
-    <circle cx="26" cy="40" r="10" fill-opacity="0.45"/>
-    <circle cx="74" cy="40" r="10" fill-opacity="0.45"/>
-    <circle cx="26" cy="40" r="5"/>
-    <circle cx="74" cy="40" r="5"/>
-  </svg>`,
-
-  wagon: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M15,27 L24,12 L74,12 L81,27 Z"/>
-    <rect x="4" y="27" width="92" height="14" rx="5"/>
-    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
-    <circle cx="26" cy="41" r="4.5"/>
-    <circle cx="74" cy="41" r="4.5"/>
-  </svg>`
+/* ── BRAND LOGOS — JSDelivr CDN from filippofilip95/car-logos-dataset ── */
+const LOGO_BASE = 'https://cdn.jsdelivr.net/gh/filippofilip95/car-logos-dataset@master/logos/optimized/';
+const BRAND_LOGO = {
+  'Toyota':'toyota','BMW':'bmw','Volkswagen':'volkswagen',
+  'Mercedes':'mercedes-benz','Audi':'audi','Ford':'ford',
+  'Volvo':'volvo','Peugeot':'peugeot','Renault':'renault',
+  'Citroën':'citroen','Dacia':'dacia','Škoda':'skoda',
+  'SEAT':'seat','Opel':'opel','Hyundai':'hyundai','Kia':'kia',
+  'Nissan':'nissan','Honda':'honda','Mazda':'mazda','Tesla':'tesla',
+  'Fiat':'fiat','Jeep':'jeep','Porsche':'porsche',
+  'Mitsubishi':'mitsubishi','Suzuki':'suzuki'
 };
 
-/* ── CONFIG ── */
+/* First-word abbreviations used in brandType labels */
+const BRAND_ALIAS = { 'VW': 'Volkswagen' };
+
+/* Type badge colours */
+const TYPE_COLOR = {
+  'SUV':'#f97316', 'Sedan':'#3b82f6', 'Hatchback':'#a855f7',
+  'Hatch':'#a855f7', 'Van':'#22c55e', 'Wagon':'#14b8a6', 'Model':'#3b82f6'
+};
+
+/* ── GAME CONFIG ── */
 const DIFF = {
   easy:   { size: 3, target: 1 },
   medium: { size: 4, target: 2 },
@@ -392,8 +392,8 @@ const DIFF = {
 
 const SIZE_STYLE = {
   3: { fs: '0.85rem', imgH: 46 },
-  4: { fs: '0.72rem', imgH: 36 },
-  5: { fs: '0.60rem', imgH: 27 }
+  4: { fs: '0.72rem', imgH: 38 },
+  5: { fs: '0.60rem', imgH: 32 }
 };
 
 const CAT_LABEL = {
@@ -406,7 +406,7 @@ const CAT_LABEL = {
 const state = { category: 'colors', difficulty: 'easy' };
 let tapped, completedLines, bingoCount, cells;
 
-/* ── SETUP ── */
+/* ── SETUP INTERACTIONS ── */
 document.querySelectorAll('[data-cat]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('selected'));
@@ -421,6 +421,73 @@ document.querySelectorAll('[data-diff]').forEach(btn => {
     state.difficulty = btn.dataset.diff;
   });
 });
+
+/* ── IMAGE HELPERS ── */
+
+/* Sedan silhouette filled with the actual color (for Colors mode) */
+function coloredCarSVG(hex) {
+  return `<svg viewBox="0 0 100 52" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24,27 L33,12 L67,12 L76,27 Z"
+          fill="${hex}" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linejoin="round"/>
+    <rect x="4" y="27" width="92" height="14" rx="5"
+          fill="${hex}" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    <circle cx="26" cy="41" r="9" fill="#0f172a"/>
+    <circle cx="74" cy="41" r="9" fill="#0f172a"/>
+    <circle cx="26" cy="41" r="4.5" fill="${hex}"/>
+    <circle cx="74" cy="41" r="4.5" fill="${hex}"/>
+  </svg>`;
+}
+
+/* Called by img onerror — swaps the broken image for a styled initial */
+function logoError(img, initial) {
+  const span = document.createElement('span');
+  span.className = 'logo-fallback';
+  span.textContent = initial;
+  img.replaceWith(span);
+}
+
+/* Brand logo <img> HTML string */
+function brandLogoImg(brand) {
+  const slug = BRAND_LOGO[brand] || brand.toLowerCase();
+  const url  = LOGO_BASE + slug + '.svg';
+  const init = (brand[0] || '?').toUpperCase();
+  return `<img src="${url}" alt="${brand}"
+               onerror="logoError(this,'${init}')"
+               style="height:var(--img-h,40px);width:auto;max-width:85%;object-fit:contain;">`;
+}
+
+/* Extract full brand name from a brandType label like "VW Hatchback" → "Volkswagen" */
+function brandFromLabel(label) {
+  const first = label.split(' ')[0];
+  return BRAND_ALIAS[first] || first;
+}
+
+/* Extract type keyword from a brandType label */
+function typeFromLabel(label) {
+  const order = ['Hatchback','Hatch','Wagon','Sedan','Van','SUV','Model'];
+  return order.find(t => label.includes(t)) || '';
+}
+
+/* Build the cell-img innerHTML for each category */
+function getCellImage(category, label) {
+  if (category === 'colors') {
+    const hex = COLOR_CSS[label] || '#888';
+    return coloredCarSVG(hex);
+  }
+
+  if (category === 'brands') {
+    return brandLogoImg(label);
+  }
+
+  // brandType: brand logo + type badge
+  const brand  = brandFromLabel(label);
+  const type   = typeFromLabel(label);
+  const color  = TYPE_COLOR[type] || '#6366f1';
+  const badge  = type
+    ? `<span class="type-badge" style="background:${color}">${type}</span>`
+    : '';
+  return brandLogoImg(brand) + badge;
+}
 
 /* ── HELPERS ── */
 function shuffle(arr) {
@@ -441,23 +508,6 @@ function getLines(size) {
   lines.push({ key: 'd1', idx: Array.from({length: size}, (_, i) => i * size + i) });
   lines.push({ key: 'd2', idx: Array.from({length: size}, (_, i) => i * size + (size - 1 - i)) });
   return lines;
-}
-
-function getCarType(label) {
-  if (label.includes('SUV'))                               return 'suv';
-  if (label.includes('Van'))                               return 'van';
-  if (label.includes('Wagon'))                             return 'wagon';
-  if (label.includes('Hatchback') || label.includes('Hatch')) return 'hatchback';
-  return 'sedan';
-}
-
-function getCellImage(category, label) {
-  if (category === 'colors') {
-    const bg = COLOR_CSS[label] || '#888';
-    return `<div class="cell-swatch" style="background:${bg}"></div>`;
-  }
-  const type = category === 'brandType' ? getCarType(label) : 'sedan';
-  return CAR_SVGS[type] || CAR_SVGS.sedan;
 }
 
 /* ── GAME FLOW ── */
