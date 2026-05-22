@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Road Bingo 🚗</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -27,10 +22,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       padding: 2rem 1.25rem 2.5rem;
       gap: 1.75rem;
       width: 100%;
       max-width: 480px;
+      min-height: 100vh;
     }
 
     .hero { text-align: center; }
@@ -46,7 +43,6 @@
     }
 
     .option-group { width: 100%; }
-
     .cat-options { display: flex; flex-direction: column; gap: 0.5rem; }
 
     .cat-btn {
@@ -63,13 +59,10 @@
       align-items: center;
       gap: 0.85rem;
     }
-    .cat-btn .icon { font-size: 1.5rem; width: 2rem; text-align: center; }
+    .cat-btn .icon  { font-size: 1.5rem; width: 2rem; text-align: center; }
     .cat-btn .label { font-weight: 600; font-size: 0.95rem; }
     .cat-btn .desc  { font-size: 0.75rem; opacity: 0.55; margin-top: 0.1rem; }
-    .cat-btn.selected {
-      background: rgba(99,102,241,0.25);
-      border-color: #818cf8;
-    }
+    .cat-btn.selected { background: rgba(99,102,241,0.25); border-color: #818cf8; }
 
     .diff-options { display: flex; gap: 0.5rem; }
 
@@ -88,13 +81,10 @@
       align-items: center;
       gap: 0.2rem;
     }
-    .diff-btn .di   { font-size: 1.6rem; }
-    .diff-btn .dn   { font-weight: 700; }
-    .diff-btn .dinfo{ font-size: 0.68rem; opacity: 0.55; }
-    .diff-btn.selected {
-      background: rgba(99,102,241,0.25);
-      border-color: #818cf8;
-    }
+    .diff-btn .di    { font-size: 1.6rem; }
+    .diff-btn .dn    { font-weight: 700; }
+    .diff-btn .dinfo { font-size: 0.68rem; opacity: 0.55; }
+    .diff-btn.selected { background: rgba(99,102,241,0.25); border-color: #818cf8; }
 
     .start-btn {
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -122,12 +112,7 @@
       gap: 0.65rem;
     }
 
-    .game-header {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      gap: 0.65rem;
-    }
+    .game-header { display: flex; align-items: center; width: 100%; gap: 0.65rem; }
 
     .back-btn {
       background: rgba(255,255,255,0.09);
@@ -144,40 +129,49 @@
     .game-meta .gtitle   { font-weight: 700; font-size: 0.95rem; }
     .game-meta .gcounter { font-size: 0.75rem; opacity: 0.55; }
 
-    .grid {
-      display: grid;
-      gap: 6px;
-      width: 100%;
-    }
+    .grid { display: grid; gap: 6px; width: 100%; }
 
     .cell {
       background: rgba(255,255,255,0.07);
       border: 2px solid rgba(255,255,255,0.11);
       border-radius: 10px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
+      gap: 4px;
       cursor: pointer;
       transition: background 0.12s, border-color 0.12s, transform 0.1s;
-      padding: 6px 4px;
+      padding: 7px 4px 6px;
       user-select: none;
       font-weight: 600;
       line-height: 1.2;
       word-break: break-word;
-      min-height: 62px;
     }
     .cell:active { transform: scale(0.91); }
-    .cell.tapped {
-      background: rgba(34,197,94,0.28);
-      border-color: #22c55e;
-      color: #86efac;
+    .cell.tapped { background: rgba(34,197,94,0.28); border-color: #22c55e; color: #86efac; }
+    .cell.bingo  { background: rgba(245,158,11,0.32); border-color: #f59e0b; color: #fde68a; }
+
+    .cell-img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--img-h, 40px);
+      flex-shrink: 0;
     }
-    .cell.bingo {
-      background: rgba(245,158,11,0.32);
-      border-color: #f59e0b;
-      color: #fde68a;
+    .cell-img svg {
+      height: 100%;
+      width: auto;
+      display: block;
     }
+    .cell-swatch {
+      width: var(--img-h, 40px);
+      height: var(--img-h, 40px);
+      border-radius: 50%;
+      border: 2.5px solid rgba(255,255,255,0.25);
+      flex-shrink: 0;
+    }
+    .cell-lbl { text-align: center; width: 100%; padding: 0 2px; }
 
     /* ── TOAST ── */
     #toast {
@@ -210,11 +204,8 @@
       min-height: 100vh;
     }
     .win-emoji { font-size: 4.5rem; animation: bounce 0.6s infinite alternate ease-in-out; }
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-18px); }
-    }
-    .win-h { font-size: 2.8rem; font-weight: 800; }
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-18px); } }
+    .win-h   { font-size: 2.8rem; font-weight: 800; }
     .win-sub { opacity: 0.65; font-size: 1rem; max-width: 280px; line-height: 1.5; }
     .again-btn {
       background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -238,9 +229,7 @@
       pointer-events: none;
       z-index: 998;
     }
-    @keyframes cffall {
-      to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-    }
+    @keyframes cffall { to { transform: translateY(105vh) rotate(720deg); opacity: 0; } }
   </style>
 </head>
 <body>
@@ -257,24 +246,15 @@
     <div class="cat-options">
       <button class="cat-btn selected" data-cat="colors">
         <span class="icon">🎨</span>
-        <div>
-          <div class="label">Colors</div>
-          <div class="desc">Spot cars by color — no car knowledge needed</div>
-        </div>
+        <div><div class="label">Colors</div><div class="desc">Spot cars by color — no car knowledge needed</div></div>
       </button>
       <button class="cat-btn" data-cat="brands">
         <span class="icon">🚗</span>
-        <div>
-          <div class="label">Brands</div>
-          <div class="desc">Spot car brands — Toyota, BMW, Dacia…</div>
-        </div>
+        <div><div class="label">Brands</div><div class="desc">Spot car brands — Toyota, BMW, Dacia…</div></div>
       </button>
       <button class="cat-btn" data-cat="brandType">
         <span class="icon">🏎️</span>
-        <div>
-          <div class="label">Brand + Type</div>
-          <div class="desc">Car nerd mode — BMW SUV, VW Hatchback…</div>
-        </div>
+        <div><div class="label">Brand + Type</div><div class="desc">Car nerd mode — BMW SUV, VW Hatchback…</div></div>
       </button>
     </div>
   </div>
@@ -283,19 +263,13 @@
     <div class="section-label">Difficulty</div>
     <div class="diff-options">
       <button class="diff-btn selected" data-diff="easy">
-        <span class="di">😊</span>
-        <span class="dn">Easy</span>
-        <span class="dinfo">3×3 · 1 bingo</span>
+        <span class="di">😊</span><span class="dn">Easy</span><span class="dinfo">3×3 · 1 bingo</span>
       </button>
       <button class="diff-btn" data-diff="medium">
-        <span class="di">😤</span>
-        <span class="dn">Medium</span>
-        <span class="dinfo">4×4 · 2 bingos</span>
+        <span class="di">😤</span><span class="dn">Medium</span><span class="dinfo">4×4 · 2 bingos</span>
       </button>
       <button class="diff-btn" data-diff="hard">
-        <span class="di">💀</span>
-        <span class="dn">Hard</span>
-        <span class="dinfo">5×5 · 3 bingos</span>
+        <span class="di">💀</span><span class="dn">Hard</span><span class="dinfo">5×5 · 3 bingos</span>
       </button>
     </div>
   </div>
@@ -327,6 +301,7 @@
 <div id="toast"></div>
 
 <script>
+/* ── DATA ── */
 const DATA = {
   colors: [
     'Red','Blue','White','Black','Silver','Gray','Green',
@@ -350,10 +325,75 @@ const DATA = {
   ]
 };
 
+const COLOR_CSS = {
+  'Red':'#ef4444','Blue':'#3b82f6','White':'#f1f5f9','Black':'#1e293b',
+  'Silver':'#94a3b8','Gray':'#6b7280','Green':'#22c55e','Yellow':'#eab308',
+  'Orange':'#f97316','Purple':'#a855f7','Brown':'#a16207','Pink':'#ec4899',
+  'Beige':'#d4b896','Gold':'#f59e0b','Navy':'#1e3a8a','Teal':'#0d9488',
+  'Maroon':'#881337','Cream':'#fef9c3','Dark Blue':'#1e40af','Light Blue':'#7dd3fc',
+  'Turquoise':'#22d3ee','Burgundy':'#9f1239','Lime':'#84cc16','Coral':'#fb7185',
+  'Champagne':'#e8d5b7'
+};
+
+/* ── CAR SVGs (fill="currentColor" — inherit tap/bingo color) ── */
+const CAR_SVGS = {
+  sedan: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24,27 L33,12 L67,12 L76,27 Z"/>
+    <rect x="4" y="27" width="92" height="14" rx="5"/>
+    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="26" cy="41" r="4.5"/>
+    <circle cx="74" cy="41" r="4.5"/>
+  </svg>`,
+
+  hatchback: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17,27 L26,12 L72,12 L79,27 Z"/>
+    <rect x="4" y="27" width="92" height="14" rx="5"/>
+    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="26" cy="41" r="4.5"/>
+    <circle cx="74" cy="41" r="4.5"/>
+  </svg>`,
+
+  suv: `<svg viewBox="0 0 100 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <rect x="11" y="8" width="78" height="17" rx="4"/>
+    <rect x="4" y="23" width="92" height="18" rx="5"/>
+    <circle cx="26" cy="41" r="10" fill-opacity="0.45"/>
+    <circle cx="74" cy="41" r="10" fill-opacity="0.45"/>
+    <circle cx="26" cy="41" r="5"/>
+    <circle cx="74" cy="41" r="5"/>
+  </svg>`,
+
+  van: `<svg viewBox="0 0 100 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="7" width="92" height="33" rx="5"/>
+    <rect x="9" y="12" width="68" height="18" rx="3" fill-opacity="0.2"/>
+    <circle cx="26" cy="40" r="10" fill-opacity="0.45"/>
+    <circle cx="74" cy="40" r="10" fill-opacity="0.45"/>
+    <circle cx="26" cy="40" r="5"/>
+    <circle cx="74" cy="40" r="5"/>
+  </svg>`,
+
+  wagon: `<svg viewBox="0 0 100 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15,27 L24,12 L74,12 L81,27 Z"/>
+    <rect x="4" y="27" width="92" height="14" rx="5"/>
+    <circle cx="26" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="74" cy="41" r="9" fill-opacity="0.45"/>
+    <circle cx="26" cy="41" r="4.5"/>
+    <circle cx="74" cy="41" r="4.5"/>
+  </svg>`
+};
+
+/* ── CONFIG ── */
 const DIFF = {
   easy:   { size: 3, target: 1 },
   medium: { size: 4, target: 2 },
   hard:   { size: 5, target: 3 }
+};
+
+const SIZE_STYLE = {
+  3: { fs: '0.85rem', imgH: 46 },
+  4: { fs: '0.72rem', imgH: 36 },
+  5: { fs: '0.60rem', imgH: 27 }
 };
 
 const CAT_LABEL = {
@@ -362,10 +402,11 @@ const CAT_LABEL = {
   brandType: '🏎️ Brand+Type'
 };
 
+/* ── STATE ── */
 const state = { category: 'colors', difficulty: 'easy' };
 let tapped, completedLines, bingoCount, cells;
 
-// Setup button handlers
+/* ── SETUP ── */
 document.querySelectorAll('[data-cat]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('selected'));
@@ -373,7 +414,6 @@ document.querySelectorAll('[data-cat]').forEach(btn => {
     state.category = btn.dataset.cat;
   });
 });
-
 document.querySelectorAll('[data-diff]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('selected'));
@@ -382,6 +422,7 @@ document.querySelectorAll('[data-diff]').forEach(btn => {
   });
 });
 
+/* ── HELPERS ── */
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -393,17 +434,33 @@ function shuffle(arr) {
 
 function getLines(size) {
   const lines = [];
-  for (let r = 0; r < size; r++) {
+  for (let r = 0; r < size; r++)
     lines.push({ key: `r${r}`, idx: Array.from({length: size}, (_, c) => r * size + c) });
-  }
-  for (let c = 0; c < size; c++) {
+  for (let c = 0; c < size; c++)
     lines.push({ key: `c${c}`, idx: Array.from({length: size}, (_, r) => r * size + c) });
-  }
   lines.push({ key: 'd1', idx: Array.from({length: size}, (_, i) => i * size + i) });
   lines.push({ key: 'd2', idx: Array.from({length: size}, (_, i) => i * size + (size - 1 - i)) });
   return lines;
 }
 
+function getCarType(label) {
+  if (label.includes('SUV'))                               return 'suv';
+  if (label.includes('Van'))                               return 'van';
+  if (label.includes('Wagon'))                             return 'wagon';
+  if (label.includes('Hatchback') || label.includes('Hatch')) return 'hatchback';
+  return 'sedan';
+}
+
+function getCellImage(category, label) {
+  if (category === 'colors') {
+    const bg = COLOR_CSS[label] || '#888';
+    return `<div class="cell-swatch" style="background:${bg}"></div>`;
+  }
+  const type = category === 'brandType' ? getCarType(label) : 'sedan';
+  return CAR_SVGS[type] || CAR_SVGS.sedan;
+}
+
+/* ── GAME FLOW ── */
 function startGame() {
   const { size } = DIFF[state.difficulty];
   cells = shuffle(DATA[state.category]).slice(0, size * size);
@@ -414,7 +471,6 @@ function startGame() {
   document.getElementById('game-title').textContent = CAT_LABEL[state.category];
   refreshCounter();
   buildGrid(size);
-
   show('game');
 }
 
@@ -425,15 +481,27 @@ function refreshCounter() {
 }
 
 function buildGrid(size) {
+  const { fs, imgH } = SIZE_STYLE[size];
   const grid = document.getElementById('grid');
   grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-  const fs = size === 3 ? '0.95rem' : size === 4 ? '0.82rem' : '0.68rem';
+  grid.style.setProperty('--img-h', imgH + 'px');
   grid.innerHTML = '';
+
   cells.forEach((label, i) => {
     const el = document.createElement('div');
     el.className = 'cell';
     el.style.fontSize = fs;
-    el.textContent = label;
+
+    const imgDiv = document.createElement('div');
+    imgDiv.className = 'cell-img';
+    imgDiv.innerHTML = getCellImage(state.category, label);
+
+    const lblDiv = document.createElement('div');
+    lblDiv.className = 'cell-lbl';
+    lblDiv.textContent = label;
+
+    el.appendChild(imgDiv);
+    el.appendChild(lblDiv);
     el.addEventListener('click', () => tap(i));
     grid.appendChild(el);
   });
@@ -455,7 +523,7 @@ function tap(i) {
     }
   }
 
-  redrawCells(size, lines);
+  redrawCells(lines);
 
   if (newBingos > 0) {
     bingoCount += newBingos;
@@ -465,7 +533,7 @@ function tap(i) {
   }
 }
 
-function redrawCells(size, lines) {
+function redrawCells(lines) {
   const bingoCells = new Set();
   for (const line of lines) {
     if (completedLines.has(line.key)) line.idx.forEach(j => bingoCells.add(j));
@@ -503,20 +571,14 @@ function show(id) {
   });
 }
 
-const COLORS = ['#f59e0b','#6366f1','#22c55e','#ef4444','#3b82f6','#ec4899','#f97316','#14b8a6'];
+const CF_COLORS = ['#f59e0b','#6366f1','#22c55e','#ef4444','#3b82f6','#ec4899','#f97316','#14b8a6'];
 
 function confetti() {
   for (let i = 0; i < 90; i++) {
     setTimeout(() => {
       const p = document.createElement('div');
       p.className = 'confetti-piece';
-      p.style.cssText = `
-        left:${Math.random()*100}vw;
-        width:${6 + Math.random()*8}px;
-        height:${6 + Math.random()*8}px;
-        background:${COLORS[i % COLORS.length]};
-        animation-duration:${1.4 + Math.random()*1.8}s;
-      `;
+      p.style.cssText = `left:${Math.random()*100}vw;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${CF_COLORS[i%CF_COLORS.length]};animation-duration:${1.4+Math.random()*1.8}s;`;
       document.body.appendChild(p);
       setTimeout(() => p.remove(), 4000);
     }, i * 28);
